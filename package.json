@@ -1,0 +1,19 @@
+{
+  "name": "restroom-monitor",
+  "version": "1.0.0",
+  "description": "9thWonder Denver Restroom Monitor",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/jpr-c8/rrmonitor"
+  ],
+  "author": "Jeff Robertson",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^7.0.0"
+  },
+  "dependencies": {
+    "ws": "^7.2.0"
+  }
+}

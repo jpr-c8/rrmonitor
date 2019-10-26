@@ -1,0 +1,81 @@
+body {
+  font-family: arial, sans-serif;
+}
+.clearBoth {
+  clear: both;
+}
+#blueprintImage {
+  margin: 0 auto;
+  width: 600px;
+  display: block;
+}
+#roomIcons {
+  width: 600px;
+  margin: 0 auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+#room1 {
+  position: absolute;
+  top: 402px;
+  left: 325px;
+  width: 69px;
+  height: 62px;
+}
+#room2 {
+  position: absolute;
+  top: 402px;
+  left: 264px;
+  width: 57px;
+  height: 62px;
+}
+#room3 {
+  position: absolute;
+  top: 327px;
+  left: 264px;
+  width: 69px;
+  height: 74px;
+}
+#room4 {
+  position: absolute;
+  top: 326px;
+  left: 524px;
+  width: 69px;
+  height: 75px;
+}
+.rrOpen {
+  background-color: rgba(94,199,78,.6);
+  background-image: url(noun_Availability_2263783.svg);
+  background-repeat: no-repeat;
+  background-size: 30px;
+  background-position: center;
+}
+.rrClosed {
+  background-color: rgba(214,43,43,.6);
+  background-image: url(noun_unavailable_2926059.svg);
+  background-repeat: no-repeat;
+  background-size: 25px;
+  background-position: center;
+}
+#rrStats {
+  margin: 50px auto 0;
+  display: block;
+  width: 500px;
+  background-color: #4bc4d3;
+  border: 5px double #000;
+  padding: 15px;
+}
+.rrSingleStat {
+  width: calc(100% - 30px);
+  background: #FFF;
+  padding: 15px;
+  margin-bottom: 30px;
+}
+#rr4 {
+  margin-bottom: 0px;
+}
+.rrSingleStat h2 {
+  margin-top: 0px;
+}
