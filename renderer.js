@@ -3,7 +3,7 @@ const {ipcRenderer} = require('electron')
 ipcRenderer.on('asynchronous-message', (event, arg) => {
 	console.log("Received: " + arg);
 
-	var data = JSON.parse(arg);
+	var data = arg;
 
 	data.forEach(function(rr) {
 		var newclass;
@@ -23,6 +23,8 @@ ipcRenderer.on('asynchronous-message', (event, arg) => {
 	  
 		if (nexttime > Date()) {
 			document.getElementById('rr' + rr.rrID + 'time').innerHTML = newinfo;
+		} else {
+			document.getElementById('rr' + rr.rrID + 'time').innerHTML = "No current stats";
 		}
 			
 		document.getElementById('room' + rr.rrID).className = newclass;

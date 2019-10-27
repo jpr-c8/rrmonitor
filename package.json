@@ -6,8 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/jpr-c8/rrmonitor"
-  ],
+  "repository": "https://github.com/jpr-c8/rrmonitor",
   "author": "Jeff Robertson",
   "license": "CC0-1.0",
   "devDependencies": {

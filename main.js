@@ -22,6 +22,17 @@ function startup() {
 
 	ws.on('message', function incoming(data) {
 		console.log('Received message: ' + data);
+		data = JSON.parse(arg);
+		
+		// Figure out which icon to show
+		var openness = [true, true, true, true];
+		
+		data.forEach(function(rr) {
+			openness[rr.ID] = rr.isopen;
+		});
+		
+		
+		
 		// Send to renderer process
 		mainWindow.webContents.send('asynchronous-message', data)
 	});
