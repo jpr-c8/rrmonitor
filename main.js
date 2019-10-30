@@ -1,9 +1,12 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
 const path = require('path')
+const Store = require('electron-store');
+const store = new Store();
 const config = require('./config');
 const WebSocket = require('ws');
 let ws;
+let rrbank = "north";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,6 +14,13 @@ let mainWindow = null;
 let appIcon = null
 
 function startup() {
+	// Get preferred restroom bank
+	if (store.get('rrbank')) {
+		if (store.get('rrbank')=='south') {
+			rrbank = "south";
+		}
+	}
+	
 	// Connect to WS
 	ws = new WebSocket(config.url);
   
@@ -30,8 +40,6 @@ function startup() {
 		data.forEach(function(rr) {
 			openness[rr.ID] = rr.isopen;
 		});
-		
-		
 		
 		// Send to renderer process
 		mainWindow.webContents.send('asynchronous-message', data)
@@ -65,7 +73,6 @@ function startup() {
 		}
 	])
 
-	appIcon.setToolTip('Open TBD');
 	appIcon.setContextMenu(contextMenu);
 	
 	appIcon.on('click', function(event) {
