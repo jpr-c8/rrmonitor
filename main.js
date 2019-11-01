@@ -14,6 +14,9 @@ let mainWindow = null;
 let appIcon = null
 
 function startup() {
+	// Create the app menu
+	makemenu();
+	
 	// Get preferred restroom bank
 	if (store.get('rrbank')) {
 		if (store.get('rrbank')=='south') {
@@ -23,6 +26,8 @@ function startup() {
 	
 	// Connect to WS
 	ws = new WebSocket(config.url);
+	
+	// TODO: Check for online/offline: https://electronjs.org/docs/tutorial/online-offline-events
   
 	ws.on('open', function open() {
 	  //ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
@@ -32,14 +37,33 @@ function startup() {
 
 	ws.on('message', function incoming(data) {
 		console.log('Received message: ' + data);
-		data = JSON.parse(arg);
+		data = JSON.parse(data);
 		
-		// Figure out which icon to show
+		// Figure out which restroom is open, in order of preference
 		var openness = [true, true, true, true];
 		
 		data.forEach(function(rr) {
-			openness[rr.ID] = rr.isopen;
+			openness[rr.ID-1] = rr.isopen;
 		});
+		
+		var prefer = [0, 1, 2, 3];
+		
+		if (rrbank == "south") {
+			prefer = [2, 3, 0, 1];
+		}
+		
+		var firstopen = 0;
+		
+		for (i = 0; i < 4; i++) {
+			console.log("Checking openness[" + prefer[i] + "] is " + openness[prefer[i]]);
+			if (openness[prefer[i]]) {
+				firstopen = i + 1;
+				break;
+			}
+		}
+		
+		// Set tray icon
+		appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + ".png"));
 		
 		// Send to renderer process
 		mainWindow.webContents.send('asynchronous-message', data)
@@ -51,9 +75,7 @@ function startup() {
 	});
 	
 	// Put in system tray
-	const iconName = process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png';
-	const iconPath = path.join(__dirname, iconName);
-	//const iconPath = path.join(__dirname, 'iconTemplate.png');
+	const iconPath = path.join(__dirname, "icons/trayunknown.png");
 	appIcon = new Tray(iconPath);
 
 	const contextMenu = Menu.buildFromTemplate([
@@ -89,7 +111,7 @@ function createWindow () {
 	mainWindow = new BrowserWindow({
 		width: 600,
 		height: 810,
-		icon: './iconTemplate.png',
+		icon: './toilet.png',
 		webPreferences: {
 		  preload: path.join(__dirname, 'preload.js'),
 		  nodeIntegration: true
@@ -139,7 +161,7 @@ app.on('window-all-closed', function () {
 		
 		// We want to minimize to tray
 	}
-})
+});
 
 app.on('activate', function () {
 	// On macOS it's common to re-create a window in the app when the
@@ -147,4 +169,67 @@ app.on('activate', function () {
 	if (mainWindow === null) {
 		createWindow();
 	}
-})
+});
+
+function makemenu() {
+	const isMac = process.platform === 'darwin';
+
+	const template = [
+	  // { role: 'appMenu' }
+	  ...(isMac ? [{
+		label: app.name,
+		submenu: [
+		  { role: 'about' },
+		  { type: 'separator' },
+		  { role: 'services' },
+		  { type: 'separator' },
+		  { role: 'hide' },
+		  { role: 'hideothers' },
+		  { role: 'unhide' },
+		  { type: 'separator' },
+		  { role: 'quit' }
+		]
+	  }] : []),
+	  // { role: 'fileMenu' }
+	  {
+		label: 'File',
+		submenu: [
+		  isMac ? { role: 'close' } : { role: 'quit' }
+		  // Probably have to change the role to a label and subscribe
+		  // or perhaps can make the app.on windows close listener check where the event came from. Only time we ignore is the X in the browser... all menu items should actually quit.
+		]
+	  },
+
+	  // { role: 'windowMenu' }
+	  {
+		label: 'Window',
+		submenu: [
+		  { role: 'minimize' },
+		  
+		  ...(isMac ? [
+			{ type: 'separator' },
+			{ role: 'front' },
+			{ type: 'separator' },
+			{ role: 'window' }
+		  ] : [
+			{ role: 'close' }
+		  ])
+		]
+	  },
+	  {
+		role: 'help',
+		submenu: [
+		  {
+			label: 'Learn More',
+			click: async () => {
+			  const { shell } = require('electron');
+			  await shell.openExternal('https://github.com/jpr-c8/rrmonitor');
+			}
+		  }
+		]
+	  }
+	]
+
+	const menu = Menu.buildFromTemplate(template)
+	Menu.setApplicationMenu(menu)
+}
