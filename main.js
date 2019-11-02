@@ -12,6 +12,7 @@ let rrbank = "north";
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow = null;
 let appIcon = null
+let firstdata = null;
 
 function startup() {
 	// Create the app menu
@@ -25,48 +26,33 @@ function startup() {
 	}
 	
 	// Connect to WS
-	ws = new WebSocket(config.url);
+	ws = new WebSocket(config.wsurl);
 	
 	// TODO: Check for online/offline: https://electronjs.org/docs/tutorial/online-offline-events
   
 	ws.on('open', function open() {
-	  //ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
-	  // 403 is a stupid error for an unexpected payload
-	  console.log("Connected to websocket.");
+		//ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
+		// 403 is a stupid error for an unexpected payload
+		console.log("Connected to websocket.");
+	  
+		// Get first set of data
+		var request = require('request');
+		request(config.apiurl, function (error, response, body) {
+		  if (response.statusCode==200) {
+			  console.log("Received first set of data: " + body);
+			  // Will use once the window is loaded
+			  firstdata = body;
+		  } else {
+			  console.log("Error: " + error);
+		  }
+		});
+		   
+		
 	});
 
 	ws.on('message', function incoming(data) {
 		console.log('Received message: ' + data);
-		data = JSON.parse(data);
-		
-		// Figure out which restroom is open, in order of preference
-		var openness = [true, true, true, true];
-		
-		data.forEach(function(rr) {
-			openness[rr.ID-1] = rr.isopen;
-		});
-		
-		var prefer = [0, 1, 2, 3];
-		
-		if (rrbank == "south") {
-			prefer = [2, 3, 0, 1];
-		}
-		
-		var firstopen = 0;
-		
-		for (i = 0; i < 4; i++) {
-			console.log("Checking openness[" + prefer[i] + "] is " + openness[prefer[i]]);
-			if (openness[prefer[i]]) {
-				firstopen = i + 1;
-				break;
-			}
-		}
-		
-		// Set tray icon
-		appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + ".png"));
-		
-		// Send to renderer process
-		mainWindow.webContents.send('asynchronous-message', data)
+		msgreceived(data);
 	});
 
 	ws.on('error', function wserror(data) {
@@ -105,6 +91,44 @@ function startup() {
 	createWindow();
 }
 
+	
+function msgreceived(data) {
+	data = JSON.parse(data);
+	if (data.Items) {
+		data = data.Items;
+	}
+	
+	// Figure out which restroom is open, in order of preference
+	var openness = [true, true, true, true];
+	
+	data.forEach(function(rr) {
+		console.log("RR" + rr.rrID + " saved as open = " + rr.isopen);
+		openness[rr.rrID-1] = rr.isopen;
+	});
+	
+	var prefer = [0, 1, 2, 3];
+	
+	if (rrbank == "south") {
+		prefer = [2, 3, 0, 1];
+	}
+	
+	var firstopen = 0;
+	
+	for (i = 0; i < 4; i++) {
+		console.log("Checking openness[" + prefer[i] + "] is " + openness[prefer[i]]);
+		if (openness[prefer[i]]) {
+			firstopen = i + 1;
+			break;
+		}
+	}
+	
+	// Set tray icon
+	appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + ".png"));
+	
+	// Send to renderer process
+	mainWindow.webContents.send('asynchronous-message', data)
+}
+
 function createWindow () {
 	
 	// Create the browser window.
@@ -134,6 +158,12 @@ function createWindow () {
 		}
 		
 		return false;
+	});
+	
+	mainWindow.webContents.on('did-finish-load', function (event) {
+		if (firstdata) {
+			msgreceived(firstdata);
+		}
 	});
 	
     /*
