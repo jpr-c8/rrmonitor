@@ -1,44 +1,19 @@
-# electron-quick-start
+# The 9thWonder Denver Restroom Monitor
 
-**Clone and run for a quick way to see Electron in action.**
+We have four restrooms. Nobody can see any of the restrooms from their desk, so finding an available toilet requires trekking up and down hallways.
 
-This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
+This app makes it more efficient by showing users available restrooms, along with their preferred restroom status (presumably the closest).
 
-**Use this app along with the [Electron API Demos](https://electronjs.org/#get-started) app for API code examples to help you get started.**
+I wrote this to learn. It's my first Electron app. If you just said Electron uses too much memory, then I'm happy to accept your native version written in C or assembly. I was not about to write a useless app twice for both Windows and Mac.
 
-A basic Electron application needs just these files:
-
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
-
-You can learn more about each of these components within the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start).
+I also wanted to use web sockets via Lambda, as well as play with machine learning to predict restroom open/close times and occupied lengths. Unnecessary, yes, but fascinating to learn.
 
 ## To Use
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+Eventually, I'll have config.js.example that you can rename. Then, somebody will have to post the code to all the Lambda functions. I may do that someday.
 
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies
-npm install
-# Run the app
-npm start
-```
+But let's be real here. This was a learning project for me, and it is useless to virtually everyone, including those for whom it was written. Nobody will be reading this or attempting to revise the app.
 
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
-## Resources for Learning Electron
-
-- [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
-- [electronjs.org/community#boilerplates](https://electronjs.org/community#boilerplates) - sample starter apps created by the community
-- [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
-- [electron/simple-samples](https://github.com/electron/simple-samples) - small applications with ideas for taking them further
-- [electron/electron-api-demos](https://github.com/electron/electron-api-demos) - an Electron app that teaches you how to use Electron
-- [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
 
 ## License
 

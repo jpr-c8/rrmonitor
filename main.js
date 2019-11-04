@@ -24,41 +24,8 @@ function startup() {
 			rrbank = "south";
 		}
 	}
-	
-	// Connect to WS
-	ws = new WebSocket(config.wsurl);
-	
-	// TODO: Check for online/offline: https://electronjs.org/docs/tutorial/online-offline-events
-  
-	ws.on('open', function open() {
-		//ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
-		// 403 is a stupid error for an unexpected payload
-		console.log("Connected to websocket.");
-	  
-		// Get first set of data
-		var request = require('request');
-		request(config.apiurl, function (error, response, body) {
-		  if (response.statusCode==200) {
-			  console.log("Received first set of data: " + body);
-			  // Will use once the window is loaded
-			  firstdata = body;
-		  } else {
-			  console.log("Error: " + error);
-		  }
-		});
-		   
-		
-	});
 
-	ws.on('message', function incoming(data) {
-		console.log('Received message: ' + data);
-		msgreceived(data);
-	});
-
-	ws.on('error', function wserror(data) {
-	  console.log('Received error: ' + data);
-	  // Need some attempt to reconnect here
-	});
+	connectws();
 	
 	// Put in system tray
 	const iconPath = path.join(__dirname, "icons/trayunknown.png");
@@ -91,6 +58,68 @@ function startup() {
 	createWindow();
 }
 
+function connectws() {
+	// Connect to WS
+	ws = new WebSocket(config.wsurl);
+	
+	ws.on('open', function open() {
+		//ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
+		// 403 is a stupid error for an unexpected payload
+		console.log("Connected to websocket.");
+	  
+		// Get first set of data
+		// ... should probably do this with the on open function, but how to was not immediately evident with Lambda. 
+		// ... already had this GET written from a very early implementation. Investigate cleaning up.
+		var request = require('request');
+		request(config.apiurl, function (error, response, body) {
+		  if (response.statusCode==200) {
+			  console.log("Received first set of data: " + body);
+			  if (mainWindow) {
+				  // Main window exists - this is a reconnect (or it was really fast to load)
+				  console.log("TO DO: THIS CANNOT JUST CHECK MAINWINDOW. Need a way to know if it is ready for data.");
+				  msgreceived(body);
+			  } else {
+				// Will use once the window is loaded
+				firstdata = body;
+			  }
+		  } else {
+			  console.log("Error: " + error);
+		  }
+		});
+		   
+		
+	});
+
+	ws.on('message', function incoming(data) {
+		console.log('Received message: ' + data);
+		msgreceived(data);
+	});
+
+	ws.on('error', function wserror(data) {
+	  console.log('Received error: ' + data);
+	  reconnectws();
+	});
+	
+	ws.on("close", function wsclose(data) {
+		console.log("WS connection closed. Code: " + data.code);
+		if (data.code!=1000) {
+			// Abnormal close
+			reconnectws();
+		}
+			
+	});
+	
+}
+
+function reconnectws() {
+	// Set timeout for the websocket to try reconnecting
+	console.log("Setting reconnect timeout");
+	
+	ws.removeAllListeners();
+	ws = null;
+		
+	setTimeout(function() { connectws(); }, 6000);
+}
 	
 function msgreceived(data) {
 	data = JSON.parse(data);
@@ -147,7 +176,7 @@ function createWindow () {
 	mainWindow.loadFile('index.html')
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools()
+	//mainWindow.webContents.openDevTools()
 	
 	mainWindow.on('close', function (event) {
 		// Capture the close event and prevent 
