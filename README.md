@@ -17,4 +17,4 @@ But let's be real here. This was a learning project for me, and it is useless to
 
 ## License
 
-[CC0 1.0 (Public Domain)](LICENSE.md)
+[MIT](LICENSE.txt)
