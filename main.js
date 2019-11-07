@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, Tray, ipcMain} = require('electron')
+const {app, BrowserWindow, Menu, Tray, ipcMain, net} = require('electron')
 const path = require('path')
 const Store = require('electron-store');
 const store = new Store();
@@ -13,6 +13,7 @@ let rrbank = "north";
 let mainWindow = null;
 let appIcon = null
 let firstdata = null;
+let firstload = true;
 
 function startup() {
 	// Create the app menu
@@ -70,22 +71,26 @@ function connectws() {
 		// Get first set of data
 		// ... should probably do this with the on open function, but how to was not immediately evident with Lambda. 
 		// ... already had this GET written from a very early implementation. Investigate cleaning up.
-		var request = require('request');
-		request(config.apiurl, function (error, response, body) {
+		var request = net.request(config.apiurl);
+		request.on("response", (response) => {
 		  if (response.statusCode==200) {
-			  console.log("Received first set of data: " + body);
-			  if (mainWindow) {
-				  // Main window exists - this is a reconnect (or it was really fast to load)
-				  console.log("TO DO: THIS CANNOT JUST CHECK MAINWINDOW. Need a way to know if it is ready for data.");
-				  msgreceived(body);
-			  } else {
-				// Will use once the window is loaded
-				firstdata = body;
-			  }
+			  
+			  response.on('data', (chunk) => {
+						console.log("Body received: " + chunk);
+						if (!firstload) {
+						  // Main window exists - this is a reconnect (or it was really fast to load)
+						  msgreceived(chunk);
+					  } else {
+						// Will use once the window is loaded
+						firstdata = chunk;
+					  }
+                });
+			  
 		  } else {
-			  console.log("Error: " + error);
+			  console.log("Error getting first set of data.");
 		  }
 		});
+		request.end();
 		   
 		
 	});
@@ -193,6 +198,8 @@ function createWindow () {
 		if (firstdata) {
 			msgreceived(firstdata);
 		}
+		console.log("did-finish-load emitted");
+		firstload = false;
 	});
 	
     /*
