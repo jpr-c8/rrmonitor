@@ -259,16 +259,16 @@ function makemenu() {
 		  { role: 'hideothers' },
 		  { role: 'unhide' },
 		  { type: 'separator' },
-		  { role: 'quit' }
+		  { label: 'Quit', click:  function(){ app.isQuiting = true; app.quit(); } }
 		]
 	  }] : []),
 	  // { role: 'fileMenu' }
 	  {
 		label: 'File',
 		submenu: [
-		  isMac ? { role: 'close' } : { role: 'quit' }
-		  // Probably have to change the role to a label and subscribe
-		  // or perhaps can make the app.on windows close listener check where the event came from. Only time we ignore is the X in the browser... all menu items should actually quit.
+		  isMac ? { role: 'close' } : { label: 'Quit', click:  function(){ app.isQuiting = true; app.quit(); } }
+		  // We can't use the standard "Quit" role here since we're overriding it unless app.isQuiting = true
+	  
 		]
 	  },
 
