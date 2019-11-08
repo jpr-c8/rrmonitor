@@ -140,10 +140,10 @@ function msgreceived(data) {
 		openness[rr.rrID-1] = rr.isopen;
 	});
 	
-	var prefer = [0, 1, 2, 3];
+	var prefer = [2, 3, 0, 1];
 	
 	if (rrbank == "south") {
-		prefer = [2, 3, 0, 1];
+		prefer = [0, 1, 2, 3];
 	}
 	
 	var firstopen = 0;
@@ -163,12 +163,18 @@ function msgreceived(data) {
 	mainWindow.webContents.send('asynchronous-message', data)
 }
 
+ipcMain.on("bankchange", (event, arg) => {
+	// This won't do anything until the next change, but that's ok. People shouldn't be playing with this setting.
+	rrbank = arg;
+	console.log("Set preferred rrbank in main process to " + rrbank);
+});
+
 function createWindow () {
 	
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
-		width: 600,
-		height: 810,
+		width: 700,
+		height: 850,
 		icon: './toilet.png',
 		webPreferences: {
 		  preload: path.join(__dirname, 'preload.js'),

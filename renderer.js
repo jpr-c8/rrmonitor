@@ -45,6 +45,6 @@ if (store.get("rrbank")) {
 function savepref(bank) {
 	store.set("rrbank", bank);
 	console.log("Saved prefered bank as " + bank);
-	// TODO: Alert main process this has changed
+	ipcRenderer.send("bankchange", bank);
 }
 
