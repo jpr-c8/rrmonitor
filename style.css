@@ -19,28 +19,28 @@ body {
 }
 #room1 {
   position: absolute;
-  top: 402px;
+  top: 398px;
   left: 325px;
   width: 69px;
   height: 62px;
 }
 #room2 {
   position: absolute;
-  top: 402px;
+  top: 398px;
   left: 264px;
   width: 57px;
   height: 62px;
 }
 #room3 {
   position: absolute;
-  top: 327px;
+  top: 321px;
   left: 264px;
   width: 69px;
   height: 74px;
 }
 #room4 {
   position: absolute;
-  top: 326px;
+  top: 320px;
   left: 524px;
   width: 69px;
   height: 75px;
@@ -59,8 +59,14 @@ body {
   background-size: 25px;
   background-position: center;
 }
-#rrStats {
-  margin: 50px auto 0;
+.rrHover.rrOpen {
+  background-color: rgba(94,199,78,1);
+}
+.rrHover.rrClosed {
+  background-color: rgba(214,43,43,1);
+}
+#rrStats, #preferences {
+  margin: 0px auto 10px;
   display: block;
   width: 500px;
   background-color: #4bc4d3;
@@ -73,9 +79,16 @@ body {
   padding: 15px;
   margin-bottom: 30px;
 }
-#rr4 {
+#rr4, #preferences .rrSingleStat:last-child {
   margin-bottom: 0px;
 }
-.rrSingleStat h2 {
+.rrSingleStat h2, #preferences h2 {
   margin-top: 0px;
+}
+.smText {
+  font-size: 12px;
+}
+td {
+  vertical-align: top;
+  position: relative;
 }
