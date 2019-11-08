@@ -18,3 +18,5 @@ But let's be real here. This was a learning project for me, and it is useless to
 ## License
 
 [MIT](LICENSE.txt)
+
+Icon made by Freepik https://www.freepik.com/home from www.flaticon.com
