@@ -19,7 +19,9 @@ But let's be real here. This was a learning project for me, and it is useless to
 
 [MIT](LICENSE.txt)
 
-Icon made by Freepik https://www.freepik.com/home from www.flaticon.com
+Toilet icon made by Freepik https://www.freepik.com/home from www.flaticon.com
+
+Availability (icon) by Seanau from the Noun Project. Unavailable (icon) by Andrejs Kirma from the Noun Project. https://thenounproject.com
 
 Blueprints created by Stacey Twigg at Shopworks Architecture http://www.shopworksarc.com/
 
