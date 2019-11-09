@@ -1,15 +1,13 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, Tray, ipcMain, net} = require('electron')
-const path = require('path')
-const Store = require('electron-store');
+const {app, BrowserWindow, Menu, Tray, ipcMain, net} = require("electron")
+const path = require("path")
+const Store = require("electron-store");
 const store = new Store();
-const config = require('./config');
-const WebSocket = require('ws');
+const config = require("./config");
+const WebSocket = require("ws");
 let ws;
 let rrbank = "north";
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow = null;
 let appIcon = null
 let firstdata = null;
@@ -20,8 +18,8 @@ function startup() {
 	makemenu();
 	
 	// Get preferred restroom bank
-	if (store.get('rrbank')) {
-		if (store.get('rrbank')=='south') {
+	if (store.get("rrbank")) {
+		if (store.get("rrbank")=="south") {
 			rrbank = "south";
 		}
 	}
@@ -35,13 +33,13 @@ function startup() {
 	const contextMenu = Menu.buildFromTemplate([
 	
 		{ 
-			label: 'Show App', 
+			label: "Show App", 
 			click:  function(){
 				mainWindow.show();
 			} 
 		},
 		{ 
-			label: 'Quit', 
+			label: "Quit", 
 			click:  function(){
 				app.isQuiting = true;
 				app.quit();
@@ -51,7 +49,7 @@ function startup() {
 
 	appIcon.setContextMenu(contextMenu);
 	
-	appIcon.on('click', function(event) {
+	appIcon.on("click", function(event) {
 		mainWindow.show();
 	});
 	
@@ -63,8 +61,8 @@ function connectws() {
 	// Connect to WS
 	ws = new WebSocket(config.wsurl);
 	
-	ws.on('open', function open() {
-		//ws.send('something'); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
+	ws.on("open", function open() {
+		//ws.send("something"); -- NOTE: if you send anything but the action payload expected, it'll throw a 403 error and you'll spend hours trying to find out why
 		// 403 is a stupid error for an unexpected payload
 		console.log("Connected to websocket.");
 	  
@@ -75,7 +73,7 @@ function connectws() {
 		request.on("response", (response) => {
 		  if (response.statusCode==200) {
 			  
-			  response.on('data', (chunk) => {
+			  response.on("data", (chunk) => {
 						console.log("Body received: " + chunk);
 						if (!firstload) {
 						  // Main window exists - this is a reconnect (or it was really fast to load)
@@ -95,13 +93,13 @@ function connectws() {
 		
 	});
 
-	ws.on('message', function incoming(data) {
-		console.log('Received message: ' + data);
+	ws.on("message", function incoming(data) {
+		console.log("Received message: " + data);
 		msgreceived(data);
 	});
 
-	ws.on('error', function wserror(data) {
-	  console.log('Received error: ' + data);
+	ws.on("error", function wserror(data) {
+	  console.log("Received error: " + data);
 	  reconnectws();
 	});
 	
@@ -160,7 +158,7 @@ function msgreceived(data) {
 	appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + ".png"));
 	
 	// Send to renderer process
-	mainWindow.webContents.send('asynchronous-message', data)
+	mainWindow.webContents.send("asynchronous-message", data)
 }
 
 ipcMain.on("bankchange", (event, arg) => {
@@ -173,23 +171,23 @@ function createWindow () {
 	
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
-		width: 700,
+		width: 1200,
 		height: 850,
-		icon: './toilet.png',
+		icon: "./toilet.png",
 		webPreferences: {
-		  preload: path.join(__dirname, 'preload.js'),
+		  preload: path.join(__dirname, "preload.js"),
 		  nodeIntegration: true
 		}
 	})
 	
 	
 	// and load the index.html of the app.
-	mainWindow.loadFile('index.html')
+	mainWindow.loadFile("index.html")
 
 	// Open the DevTools.
 	//mainWindow.webContents.openDevTools()
 	
-	mainWindow.on('close', function (event) {
+	mainWindow.on("close", function (event) {
 		// Capture the close event and prevent 
 		// so it closes to the tray
 		if(!app.isQuiting){
@@ -200,7 +198,7 @@ function createWindow () {
 		return false;
 	});
 	
-	mainWindow.webContents.on('did-finish-load', function (event) {
+	mainWindow.webContents.on("did-finish-load", function (event) {
 		if (firstdata) {
 			msgreceived(firstdata);
 		}
@@ -210,7 +208,7 @@ function createWindow () {
 	
     /*
 	// Emitted when the window is closed.
-	mainWindow.on('closed', function () {
+	mainWindow.on("closed", function () {
 		// Dereference the window object, usually you would store windows
 		// in an array if your app supports multi windows, this is the time
 		// when you should delete the corresponding element.
@@ -222,20 +220,20 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', startup);
+app.on("ready", startup);
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on("window-all-closed", function () {
 	// On macOS it is common for applications and their menu bar
 	// to stay active until the user quits explicitly with Cmd + Q
-	if (process.platform !== 'darwin') {
+	if (process.platform !== "darwin") {
 		//app.quit();
 		
 		// We want to minimize to tray
 	}
 });
 
-app.on('activate', function () {
+app.on("activate", function () {
 	// On macOS it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
 	if (mainWindow === null) {
@@ -244,58 +242,58 @@ app.on('activate', function () {
 });
 
 function makemenu() {
-	const isMac = process.platform === 'darwin';
+	const isMac = process.platform === "darwin";
 
 	const template = [
-	  // { role: 'appMenu' }
+	  // { role: "appMenu" }
 	  ...(isMac ? [{
 		label: app.name,
 		submenu: [
-		  { role: 'about' },
-		  { type: 'separator' },
-		  { role: 'services' },
-		  { type: 'separator' },
-		  { role: 'hide' },
-		  { role: 'hideothers' },
-		  { role: 'unhide' },
-		  { type: 'separator' },
-		  { label: 'Quit', click:  function(){ app.isQuiting = true; app.quit(); } }
+		  { role: "about" },
+		  { type: "separator" },
+		  { role: "services" },
+		  { type: "separator" },
+		  { role: "hide" },
+		  { role: "hideothers" },
+		  { role: "unhide" },
+		  { type: "separator" },
+		  { label: "Quit", click:  function(){ app.isQuiting = true; app.quit(); } }
 		]
 	  }] : []),
-	  // { role: 'fileMenu' }
+	  // { role: "fileMenu" }
 	  {
-		label: 'File',
+		label: "File",
 		submenu: [
-		  isMac ? { role: 'close' } : { label: 'Quit', click:  function(){ app.isQuiting = true; app.quit(); } }
+		  isMac ? { role: "close" } : { label: "Quit", click:  function(){ app.isQuiting = true; app.quit(); } }
 		  // We can't use the standard "Quit" role here since we're overriding it unless app.isQuiting = true
 	  
 		]
 	  },
 
-	  // { role: 'windowMenu' }
+	  // { role: "windowMenu" }
 	  {
-		label: 'Window',
+		label: "Window",
 		submenu: [
-		  { role: 'minimize' },
+		  { role: "minimize" },
 		  
 		  ...(isMac ? [
-			{ type: 'separator' },
-			{ role: 'front' },
-			{ type: 'separator' },
-			{ role: 'window' }
+			{ type: "separator" },
+			{ role: "front" },
+			{ type: "separator" },
+			{ role: "window" }
 		  ] : [
-			{ role: 'close' }
+			{ role: "close" }
 		  ])
 		]
 	  },
 	  {
-		role: 'help',
+		role: "help",
 		submenu: [
 		  {
-			label: 'Learn More',
+			label: "Learn More",
 			click: async () => {
-			  const { shell } = require('electron');
-			  await shell.openExternal('https://github.com/jpr-c8/rrmonitor');
+			  const { shell } = require("electron");
+			  await shell.openExternal("https://github.com/jpr-c8/rrmonitor");
 			}
 		  }
 		]

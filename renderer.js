@@ -1,8 +1,8 @@
-const {ipcRenderer} = require('electron')
-const Store = require('electron-store');
+const {ipcRenderer} = require("electron")
+const Store = require("electron-store");
 const store = new Store();
 
-ipcRenderer.on('asynchronous-message', (event, arg) => {
+ipcRenderer.on("asynchronous-message", (event, arg) => {
 	console.log("Received: " + arg);
 
 	var data = arg;
@@ -24,12 +24,12 @@ ipcRenderer.on('asynchronous-message', (event, arg) => {
 		}
 	  
 		if (nexttime > Date()) {
-			document.getElementById('rr' + rr.rrID + 'time').innerHTML = newinfo;
+			document.getElementById("rr" + rr.rrID + "time").innerHTML = newinfo;
 		} else {
-			document.getElementById('rr' + rr.rrID + 'time').innerHTML = "No current stats";
+			document.getElementById("rr" + rr.rrID + "time").innerHTML = "No current stats";
 		}
 			
-		document.getElementById('room' + rr.rrID).className = newclass;
+		document.getElementById("room" + rr.rrID).className = newclass;
 	});
   
 });
