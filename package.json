@@ -31,8 +31,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "9w_restroom_monitor",
-			"iconUrl": "icons/windows.ico"
+            "name": "restroom_monitor",
+			"icon": "icons/windows.ico"
           }
         },
         {
