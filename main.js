@@ -13,6 +13,9 @@ let appIcon = null
 let firstdata = null;
 let firstload = true;
 
+// Shut down if this is loading during install/uninstall process
+if (require("electron-squirrel-startup")) return app.quit();
+
 function startup() {
 	// Create the app menu
 	makemenu();
