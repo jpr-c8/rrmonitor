@@ -45,10 +45,7 @@ function startup() {
 		},
 		{ 
 			label: "Quit", 
-			click:  function(){
-				app.isQuiting = true;
-				app.quit();
-			} 
+			click: function() { thequit(); }
 		}
 	])
 
@@ -275,6 +272,13 @@ app.on("activate", function () {
 	}
 });
 
+function thequit() {
+	console.log("Quitting");
+	if (ws) { ws.close(); }
+	app.isQuiting = true;
+	app.quit();
+}
+
 function makemenu() {
 	const isMac = process.platform === "darwin";
 
@@ -291,14 +295,14 @@ function makemenu() {
 		  { role: "hideothers" },
 		  { role: "unhide" },
 		  { type: "separator" },
-		  { label: "Quit", click:  function(){ app.isQuiting = true; app.quit(); } }
+		  { label: "Quit", click: function() { thequit(); } }
 		]
 	  }] : []),
 	  // { role: "fileMenu" }
 	  {
 		label: "File",
 		submenu: [
-		  isMac ? { role: "close" } : { label: "Quit", click:  function(){ app.isQuiting = true; app.quit(); } }
+		  isMac ? { role: "close" } : { label: "Quit", click: function() { thequit(); } }
 		  // We can't use the standard "Quit" role here since we're overriding it unless app.isQuiting = true
 	  
 		]
