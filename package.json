@@ -26,7 +26,13 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+		"win32metadata":{
+          "FileDescription": "9thWonder Denver Restroom Monitor",
+          "ProductName": "Restroom Monitor",
+          "CompanyName": "9thWonder"
+        }
+	  },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
