@@ -12,6 +12,8 @@ let mainWindow = null;
 let appIcon = null
 let firstdata = null;
 let firstload = true;
+let wsdead = null;
+let pingit = null;
 
 // Shut down if this is loading during install/uninstall process
 if (require("electron-squirrel-startup")) return app.quit();
@@ -62,6 +64,7 @@ function startup() {
 
 function connectws() {
 	// Connect to WS
+	console.log("Attempting to connect to websocket");
 	ws = new WebSocket(config.wsurl);
 	
 	ws.on("open", function open() {
@@ -69,6 +72,9 @@ function connectws() {
 		// 403 is a stupid error for an unexpected payload
 		console.log("Connected to websocket.");
 	  
+		// Set timeout for heartbeat
+		pingit = setTimeout(function() { ws.ping(); }, 30000);
+		
 		// Get first set of data
 		// ... should probably do this with the on open function, but how to was not immediately evident with Lambda. 
 		// ... already had this GET written from a very early implementation. Investigate cleaning up.
@@ -100,6 +106,17 @@ function connectws() {
 		console.log("Received message: " + data);
 		msgreceived(data);
 	});
+	
+	ws.on("pong", function wspong(data) {
+		console.log("Restarting wsdead. Received pong.");
+		// Clear timeouts, if any
+		clearTimeout(pingit);
+		clearTimeout(wsdead);
+		
+		// And reset timeouts
+		pingit = setTimeout(function() { ws.ping(); }, 30000);
+		wsdead = setTimeout(function() { reconnectws(); }, 40000);
+	});
 
 	ws.on("error", function wserror(data) {
 	  console.log("Received error: " + data);
@@ -117,18 +134,23 @@ function connectws() {
 	
 }
 
+
 function reconnectws() {
 	// Show that we no longer know the status
 	appIcon.setImage(path.join(__dirname, "icons/trayunknown.png"));
 	
+	// Clear timeouts, if any
+	clearTimeout(pingit);
+	clearTimeout(wsdead);
 	
 	// Set timeout for the websocket to try reconnecting
-	console.log("Setting reconnect timeout");
+	console.log("Disconnected. Setting reconnect timeout");
 	
 	ws.removeAllListeners();
+	ws.terminate();
 	ws = null;
 		
-	setTimeout(function() { connectws(); }, 6000);
+	setTimeout(function() { connectws(); }, 60000);
 }
 	
 function msgreceived(data) {
