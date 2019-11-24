@@ -118,6 +118,10 @@ function connectws() {
 }
 
 function reconnectws() {
+	// Show that we no longer know the status
+	appIcon.setImage(path.join(__dirname, "icons/trayunknown.png"));
+	
+	
 	// Set timeout for the websocket to try reconnecting
 	console.log("Setting reconnect timeout");
 	
@@ -172,11 +176,16 @@ ipcMain.on("bankchange", (event, arg) => {
 
 function createWindow () {
 	
+	var winicon = path.join(__dirname, "icons/toilet.png");
+	if (process.platform == "win32") {
+		winicon = path.join(__dirname, "icons/windows.ico");
+	}
+	
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width: 1200,
 		height: 850,
-		icon: "./toilet.png",
+		icon: winicon,
 		webPreferences: {
 		  preload: path.join(__dirname, "preload.js"),
 		  nodeIntegration: true
