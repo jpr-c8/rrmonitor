@@ -340,4 +340,7 @@ function makemenu() {
 
 	const menu = Menu.buildFromTemplate(template)
 	Menu.setApplicationMenu(menu)
+	
+	// While we're at it, hide it from the dock (Mac only)
+	app.dock.hide();
 }
