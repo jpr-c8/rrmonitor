@@ -10,7 +10,7 @@ I also wanted to use web sockets via Lambda, as well as play with machine learni
 
 ## To Use
 
-Eventually, I'll have config.js.example that you can rename. Then, somebody will have to post the code to all the Lambda functions. I may do that someday.
+Just change config-example.js to config.js and set the proper API endpoints. Then, somebody will have to post the code to all the Lambda functions. I may do that someday.
 
 But let's be real here. This was a learning project for me, and it is useless to virtually everyone, including those for whom it was written. Nobody will be reading this or attempting to revise the app.
 
