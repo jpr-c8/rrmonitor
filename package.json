@@ -27,6 +27,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+		"icon": "icons/generic",
 		"win32metadata":{
           "FileDescription": "9thWonder Denver Restroom Monitor",
           "ProductName": "Restroom Monitor",
@@ -38,7 +39,9 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "restroom_monitor",
-			"icon": "icons/windows.ico"
+			"icon": "icons/generic.ico",
+			"setupIcon": "icons/generic.ico",
+			"name": "RestroomMonitor"
           }
         },
         {
@@ -46,7 +49,7 @@
           "config": {}
         },
         {
-          "name": "@electron-forge/maker-dmg",
+          "name": "@electron-forge/maker-zip",
           "config": 
 			{
 			  "title": "Restroom Monitor",

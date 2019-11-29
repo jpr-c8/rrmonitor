@@ -197,7 +197,7 @@ function createWindow () {
 	
 	var winicon = path.join(__dirname, "icons/toilet.png");
 	if (process.platform == "win32") {
-		winicon = path.join(__dirname, "icons/windows.ico");
+		winicon = path.join(__dirname, "icons/generic.ico");
 	}
 	
 	// Create the browser window.
