@@ -174,8 +174,9 @@ function msgreceived(data) {
 	
 	for (i = 0; i < 4; i++) {
 		console.log("Checking openness[" + prefer[i] + "] is " + openness[prefer[i]]);
-		if (openness[prefer[i]]) {
-			firstopen = i + 1;
+		if (openness[prefer[i]]==true) {
+			firstopen = prefer[i] + 1;
+			console.log("First open is " + firstopen);
 			break;
 		}
 	}
