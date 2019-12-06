@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, Tray, ipcMain, net} = require("electron")
-const path = require("path")
+const {app, BrowserWindow, Menu, Tray, ipcMain, net} = require("electron");
+const path = require("path");
 const Store = require("electron-store");
 const store = new Store();
 const config = require("./config");
@@ -14,6 +14,9 @@ let firstdata = null;
 let firstload = true;
 let wsdead = null;
 let pingit = null;
+
+let fourx = "";
+if (process.platform == "win32") { fourx = "@4x"; }
 
 // Shut down if this is loading during install/uninstall process
 if (require("electron-squirrel-startup")) return app.quit();
@@ -32,7 +35,7 @@ function startup() {
 	connectws();
 	
 	// Put in system tray
-	const iconPath = path.join(__dirname, "icons/trayunknown.png");
+	const iconPath = path.join(__dirname, "icons/trayunknown" + fourx + ".png");
 	appIcon = new Tray(iconPath);
 
 	const contextMenu = Menu.buildFromTemplate([
@@ -134,7 +137,7 @@ function connectws() {
 
 function reconnectws() {
 	// Show that we no longer know the status
-	appIcon.setImage(path.join(__dirname, "icons/trayunknown.png"));
+	appIcon.setImage(path.join(__dirname, "icons/trayunknown" + fourx + ".png"));
 	
 	// Clear timeouts, if any
 	clearTimeout(pingit);
@@ -182,7 +185,7 @@ function msgreceived(data) {
 	}
 	
 	// Set tray icon
-	appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + ".png"));
+	appIcon.setImage(path.join(__dirname, "icons/tray" + firstopen + fourx + ".png"));
 	
 	// Send to renderer process
 	mainWindow.webContents.send("asynchronous-message", data)
