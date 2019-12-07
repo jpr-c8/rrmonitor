@@ -348,3 +348,7 @@ function makemenu() {
 	// While we're at it, hide it from the dock (Mac only)
 	if (isMac) { app.dock.hide(); }
 }
+
+app.setLoginItemSettings({
+    openAtLogin: true
+});
