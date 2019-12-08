@@ -349,6 +349,25 @@ function makemenu() {
 	if (isMac) { app.dock.hide(); }
 }
 
-app.setLoginItemSettings({
-    openAtLogin: true
-});
+
+if (process.platform == "win32") {
+	// Auto-start for Windows
+	const appFolder = path.dirname(process.execPath)
+	const updateExe = path.resolve(appFolder, '..', 'Update.exe')
+	const exeName = path.basename(process.execPath)
+
+	app.setLoginItemSettings({
+	  openAtLogin: true,
+	  path: updateExe,
+	  args: [
+		'--processStart', `"${exeName}"`,
+		'--process-start-args', `"--hidden"`
+	  ]
+	});
+} else {
+	// Auto-start for Mac
+	app.setLoginItemSettings({
+	  openAtLogin: true,
+	  openAsHidden: true
+	});
+}
