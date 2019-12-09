@@ -352,9 +352,9 @@ function makemenu() {
 
 if (process.platform == "win32") {
 	// Auto-start for Windows
-	const appFolder = path.dirname(process.execPath)
-	const updateExe = path.resolve(appFolder, '..', 'Update.exe')
-	const exeName = path.basename(process.execPath)
+	const appFolder = path.dirname(process.execPath);
+	const updateExe = path.resolve(appFolder, "..", "Update.exe");
+	const exeName = path.basename(process.execPath);
 
 	app.setLoginItemSettings({
 	  openAtLogin: true,
